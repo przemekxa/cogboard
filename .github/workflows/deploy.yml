@@ -2,6 +2,7 @@ name: Deploy PUT
 on:
   push:
     branches: [ put ]
+  workflow_dispatch:
 
 jobs:
   deploy:
