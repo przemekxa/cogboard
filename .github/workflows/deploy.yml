@@ -21,4 +21,4 @@ jobs:
           git checkout put
           git pull
           git status
-          sudo sh gradlew
+          ./gradlew
