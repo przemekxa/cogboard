@@ -1,0 +1,23 @@
+name: Deploy PUT
+on:
+  push:
+    branches: [ put ]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: SSH Deploy
+    - uses: appleboy/ssh-action@master
+      with:
+        host: 150.254.30.120
+        username: sds
+        key: ${{ secrets.ACTION_KEY }}
+        port: 22
+        script: |
+          cd /home/sds/cogboard
+          git checkout put
+          git pull
+          git status
+          sudo sh gradlew
