@@ -19,6 +19,7 @@ jobs:
         script: |
           cd /home/sds/cogboard
           git checkout put
+          git reset --hard HEAD
           git pull
           git status
           ./gradlew
