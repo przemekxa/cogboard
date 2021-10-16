@@ -21,7 +21,7 @@ services:
     environment:
       - COGBOARD_VERSION=${COGBOARD_VERSION}
     volumes:
-      - "./mnt:/data"
+      - "../data:/data"
     networks:
       - cognet
   #    ports:
