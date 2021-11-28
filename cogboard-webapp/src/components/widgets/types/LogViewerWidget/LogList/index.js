@@ -10,9 +10,29 @@ import {
   VariableGridSchema
 } from './styled';
 import getGridTemplate from './helpers';
+import { getFilters } from '../Toolbar/FilterPicker/helpers';
 
-export default function LogList({ logs, template }) {
+export default function LogList({ widgetLocalStorage, logs, template }) {
   const theme = useTheme();
+  const filters = getFilters(widgetLocalStorage);
+
+  const filterByRegExp = (log, filters) =>
+    filters
+      .filter(f => f.checked)
+      .every(({ regExp }) => {
+        const regExpObj = new RegExp(regExp);
+        const texts = [];
+        // loop through log variable columns
+        log.variableData.forEach(({ header, description }) => {
+          texts.push(header);
+          texts.push(description);
+        });
+
+        return texts.some(text => text.match(regExpObj));
+      });
+
+  const filteredLogs = logs?.filter(log => filterByRegExp(log, filters));
+
   const VariableLogListHeader = () => (
     <VariableGridSchema template={getGridTemplate(template)}>
       {template.map((name, index) => (
@@ -32,13 +52,14 @@ export default function LogList({ logs, template }) {
       </Header>
 
       <LogsWrapper>
-        {logs?.map((log, index) => (
+        {filteredLogs?.map((log, index) => (
           <LogEntry
             key={index}
+            id={log._id}
             type={log.type}
             date={log.date}
-            additionalData={log.additionalData}
             variableData={log.variableData}
+            template={template}
           />
         ))}
       </LogsWrapper>
