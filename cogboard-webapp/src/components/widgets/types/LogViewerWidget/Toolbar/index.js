@@ -10,7 +10,6 @@ import DateRangePicker from './DateRangePicker';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterPicker from './FilterPicker';
-import QuarantineModal from './QuarantineModal';
 
 const Toolbar = ({
   wid,
@@ -18,12 +17,18 @@ const Toolbar = ({
   widgetLocalStorage,
   setSearchFilter,
   shouldFollowLogs,
-  handleFollowChange
+  handleFollowChange,
+  lastLog
 }) => {
   const theme = useTheme();
 
-  const handleClearLogs = () =>
-    saveDateSpan(widgetLocalStorage, { begin: moment(), end: null });
+  const handleClearLogs = () => {
+    const date = lastLog?.date;
+    if (date) {
+      const beginDate = moment(date).add(1, 'seconds');
+      saveDateSpan(widgetLocalStorage, { begin: beginDate, end: null });
+    }
+  };
 
   return (
     <Wrapper>
@@ -35,7 +40,11 @@ const Toolbar = ({
         />
       </ToolbarGroup>
 
-      <FilterPicker widgetLocalStorage={widgetLocalStorage} />
+      <FilterPicker
+        widgetLocalStorage={widgetLocalStorage}
+        wid={wid}
+        quarantine={quarantine}
+      />
 
       <DateRangePicker widgetLocalStorage={widgetLocalStorage} />
 
@@ -53,13 +62,11 @@ const Toolbar = ({
           size="small"
           theme={theme}
           onClick={handleClearLogs}
+          data-cy="clear-logs-button"
         >
           <DeleteIcon />
           Clear logs
         </RedButton>
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <QuarantineModal wid={wid} quarantine={quarantine} />
       </ToolbarGroup>
     </Wrapper>
   );

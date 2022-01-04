@@ -41,12 +41,9 @@ export const ColumnTitle = styled(Typography)`
 export const Text = styled(Typography)(({ type }) => {
   let logTypeStyles = ``;
   if (type) {
-    const logLevel = logLevels.find(
-      level => level.value === type?.toLowerCase()
-    );
     logTypeStyles = `
       font-weight: 500;
-      color: ${logLevel?.color || COLORS.WHITE};
+      color: ${logLevels[type.toLowerCase()]?.color || COLORS.WHITE};
     `;
   }
 
@@ -79,8 +76,8 @@ export const CustomAccordion = styled(Accordion)`
     background-color: ${COLORS.LIGHT_SHADE};
     overflow: hidden;
   }
-  &.Mui-expanded {
-    margin: 0.5em 0 !important;
+  &&.Mui-expanded {
+    margin: 0.5em 0;
   }
 
   .MuiAccordionSummary-root {

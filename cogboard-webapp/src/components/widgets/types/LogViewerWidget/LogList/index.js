@@ -37,15 +37,15 @@ export default function LogList({
   const dateSpan = getDateSpan(widgetLocalStorage);
 
   const filteredLogs = logs
-    ?.filter(log => filterByRegExp(log, filters))
+    ?.filter(log => filterByLevel(log, level))
     .filter(log => filterByDateSpan(log, dateSpan))
-    .filter(log => filterByLevel(log, level))
-    .reverse(); // maybe logs can be sent in correct order
+    .filter(log => filterByRegExp(log, filters));
 
+  console.log(template);
 
   const VariableLogListHeader = () => (
     <VariableGridSchema template={getGridTemplate(template)}>
-      {template.map((name, index) => (
+      {template?.map((name, index) => (
         <ColumnTitle key={index}>{name}</ColumnTitle>
       ))}
     </VariableGridSchema>
@@ -53,15 +53,12 @@ export default function LogList({
 
   useEffect(() => {
     if (shouldFollowLogs) {
-      console.log(scrollerRef.current.scrollHeight);
-      console.log(scrollerRef.current.scrollTop);
       scrollerRef.current.scrollTo({
         top: scrollerRef.current.scrollHeight,
         behavior: 'smooth'
       });
     }
     setScroll(scrollerRef.current.scrollTop);
-    console.log(scroll);
   }, [filteredLogs, shouldFollowLogs, scroll]);
 
   const stopFollowingOnUpScroll = () => {
@@ -69,6 +66,25 @@ export default function LogList({
       handleFollowChange(false);
     }
     setScroll(scrollerRef.current.scrollTop);
+  };
+
+  const handleScrollChange = isScrolling =>
+    isScrolling && stopFollowingOnUpScroll();
+
+  const getLogByIndex = index => {
+    const log = filteredLogs[index];
+    return (
+      <LogEntry
+        key={log._id}
+        id={log._id}
+        type={log.type}
+        date={log.date}
+        variableData={log.variableData}
+        template={template}
+        search={search}
+        highlight={isLogHighlighted(log, search)}
+      />
+    );
   };
 
   return (
@@ -84,24 +100,10 @@ export default function LogList({
       <LogsWrapper>
         <StyledVirtuoso
           scrollerRef={ref => (scrollerRef.current = ref)}
-          isScrolling={isScrolling => isScrolling && stopFollowingOnUpScroll()}
+          isScrolling={handleScrollChange}
           totalCount={filteredLogs.length}
           increaseViewportBy={300} // defines loading overlap (in pixels)
-          itemContent={index => {
-            const log = filteredLogs[index];
-            return (
-              <LogEntry
-                key={log._id}
-                id={log._id}
-                type={log.type}
-                date={log.date}
-                variableData={log.variableData}
-                template={template}
-                search={search}
-                highlight={isLogHighlighted(log, search)}
-              />
-            );
-          }}
+          itemContent={getLogByIndex}
         />
       </LogsWrapper>
     </Container>

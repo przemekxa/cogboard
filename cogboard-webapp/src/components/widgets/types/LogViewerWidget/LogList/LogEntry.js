@@ -28,6 +28,7 @@ const LogEntry = ({
       <VariableGridSchema
         template={variableFieldsTemplate}
         skipColumns={description}
+        data-cy="log-variable-data"
       >
         {variableData.map((entry, index) => {
           const entryText = description ? entry.description : entry.header;
@@ -42,15 +43,17 @@ const LogEntry = ({
   };
 
   return (
-    <CustomAccordion expanded={expanded}>
+    <CustomAccordion expanded={expanded} data-cy="log-entry">
       <AccordionSummary
         onClick={() => setExpanded(!expanded)}
         expandIcon={expanded && <ExpandMoreIcon />}
       >
         {highlight && <HighlightMark />}
         <GridSchema>
-          <Text type={type}>{type?.toUpperCase()}</Text>
-          <Text>{date}</Text>
+          <Text type={type} data-cy="log-entry-level">
+            {type?.toUpperCase()}
+          </Text>
+          <Text data-cy="log-entry-data">{date}</Text>
           <VariablePart />
         </GridSchema>
       </AccordionSummary>
