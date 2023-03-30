@@ -23,7 +23,7 @@ jobs:
           ./gradlew --stacktrace -i -x :cogboard-app:test
       - name: Publish App to DockerHub
         if: ${{ success() }}
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: cogboard/cogboard-app
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -32,7 +32,7 @@ jobs:
           workdir: build
       - name: Publish Webapp to DockerHub
         if: ${{ success() }}
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: cogboard/cogboard-web
           username: ${{ secrets.DOCKER_USERNAME }}
